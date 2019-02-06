@@ -17,7 +17,7 @@
       <div class="row justify-content-md-center">
         <section class="mt-3 col-4">
           <b-list-group class="col-12">
-            <b-list-group-item v-for="item in arrRankingList" v-bind:key="item" button><b-img left rounded="circle" width="75" class="mr-4" :src="item.picture" alt="left image"/>{{item.name}}<p>{{item.description}}</p></b-list-group-item>
+            <b-list-group-item v-b-popover.hover="item.positive" title="Popover Title" id="popoverButton-sync" class="text-monospace" v-for="item in arrRankingList" v-bind:key="item" button><b-img left rounded="circle" width="75" class="mr-4" :src="item.picture" alt="left image"/>{{item.name}}<p>{{item.description}}</p></b-list-group-item>
           </b-list-group>
         </section>
       </div>
