@@ -19,7 +19,7 @@
       <div class="row justify-content-md-center">
         <section class="mt-3 col-4">
           <b-list-group class="col-12">
-            <b-list-group-item v-b-popover.hover="item.positive" title="Popover Title" id="popoverButton-sync" class="text-monospace" v-for="item in arrRankingList" v-bind:key="item.name" button><b-img left rounded="circle" width="75" class="mr-4" :src="item.picture" alt="left image"/><b-badge variant="primary">{{rankingNumber}}</b-badge>{{item.name}}<p id="p">{{item.description}}</p></b-list-group-item>
+            <b-list-group-item v-b-popover.hover="item.positive" title="GOSTAM" id="popoverButton-sync" class="text-monospace" v-for="item in arrRankingList" v-bind:key="item.name" button><b-img left rounded="circle" width="75" class="mr-4" :src="item.picture" alt="left image"/><b-badge variant="primary">{{item.rank}}</b-badge>{{item.name}}<p id="p">{{item.description}}</p></b-list-group-item>
           </b-list-group>
         </section>
       </div>
@@ -38,24 +38,35 @@ export default {
   data () {
     return {
       arrRankingList: [],
-      rankingNumber: ''
     }
   },
-  methods: {
-    // rankingNumber:function () {
-    //   let a = 1
-    //     a++
-    //     this.rankingNumber = a
-    // }
-  },
   mounted () {
-    // this.rankingNumber()
     // GET para consumir o json
     axios
       .get('./src/matchboxbrasil.json')
       .then(response => {
-        this.arrRankingList = response.data.data // encapsular o array de objetos do arquivo json no array criado em data()
-        console.log(response.data.data.name)
+        let arrayRetorno = response.data.data
+        // forEach para calcular porcentagem
+        arrayRetorno.forEach(pessoa => {
+            let total = (pessoa.positive || 0) + (pessoa.negative || 0)
+            // this.rankingNumber = rankingNumber
+            pessoa.positive = ((pessoa.positive * 100) / total).toFixed(2) + "%"
+            pessoa.negative = ((pessoa.negative * 100) / total).toFixed(2) + "%"
+
+          })
+        // sort pela porcentagem
+        arrayRetorno.sort((a, b) => {
+          if (a.positive > b.positive)
+            return 0;
+          if (a.positive < b.positive)
+            return 1;
+            return -1;
+        });
+        arrayRetorno.forEach((pessoa, indice) => {
+            pessoa.rank = indice+1;
+        })
+        this.arrRankingList = arrayRetorno // encapsular o array de objetos do arquivo json no array criado em data()
+
       })
       .catch(error => {
         console.log(error)
